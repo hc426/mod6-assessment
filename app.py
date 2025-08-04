@@ -1,4 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
+import os
+
+
 # You will likely need a database e.g. DynamoDB so you might either boto3 or pynamodb
 # Additional installs here:
 #
@@ -53,4 +56,5 @@ def delete(todo_id):
     return redirect(url_for("home"))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port =int(os.environ.get('PORT', 80))
+    app.run(debug=True, port=port, host = '0.0.0.0')
