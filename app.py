@@ -19,9 +19,10 @@ def home():
     # Complete the code below
     # The todo_list variable should be returned by running a scan on your DDB table,
     # which is then converted to a list
-    todo_list =
+    todo_list = []
 
     # can leave this line as is to use the template that's provided
+    return 'hello world'
     return render_template("base.html", todo_list=todo_list)
 
 
