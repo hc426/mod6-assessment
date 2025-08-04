@@ -5,8 +5,8 @@ import pytest
 def client():
     return create_test_client()
 
-def test_home(client):
-    resp = client.get('/')
+def test_index(client):
+    resp = client.get('/index')
     assert resp.data.decode() == 'hello world'
 
 def test_get(client):

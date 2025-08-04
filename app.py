@@ -15,7 +15,9 @@ app = Flask(name)
 #
 #
 #
-
+@app.route("/index")
+def index():
+    return 'hello world'
 
 @app.route("/")
 def home():
