@@ -9,7 +9,7 @@ def test_index(client):
     resp = client.get('/index')
     assert resp.data.decode() == 'hello world'
 
-def test_get(client):
+def test_home(client):
     resp = client.get('/')
     assert resp.status_code == 200
 
