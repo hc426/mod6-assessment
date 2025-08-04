@@ -1,0 +1,10 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - echo Running tests...
+      - pytest
+  post_build:
+    commands:
+      - echo Build completed successfully.
