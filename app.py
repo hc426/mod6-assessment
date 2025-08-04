@@ -81,10 +81,10 @@ def update(todo_id):
     table = db.Table('todo-list-table')
 
     # Get the current completion status of the todo item
-    response = table.get_item(Key={'todoId': todo_id})
+    response = table.get_item(Key={'taskId': todo_id})
     current_status = response['Item'].get('completed', False)
 
-    table.update_item(Key={'todoId': todo_id}, 
+    table.update_item(Key={'taskId': todo_id}, 
                       UpdateExpression="SET completed = :val",  # Update the completed field to True
                       ExpressionAttributeValues={':val': not current_status}  # Toggle the value
     )
@@ -102,7 +102,7 @@ def delete(todo_id):
     table = db.Table('todo-list-table')
 
     # Delete item
-    table.delete_item( Key={'todoId': todo_id})
+    table.delete_item( Key={'taskId': todo_id})
 
     return redirect(url_for("home"))
 
