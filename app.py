@@ -70,7 +70,7 @@ def add():
 
     return redirect(url_for("home"))
 
-@app.route("/update/<todo_id>")
+@app.route("/update/<int:todo_id>")
 def update(todo_id):
     # Updates an existing item
     # For this particular app, updating just toggles the completion between True / False
@@ -102,7 +102,7 @@ def delete(todo_id):
     table = db.Table('todo-list-table')
 
     # Delete item
-    table.delete_item( Key={'taskId': todo_id})
+    table.delete_item(Key={'taskId': todo_id})
 
     return redirect(url_for("home"))
 
