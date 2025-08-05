@@ -1,4 +1,4 @@
-from app import create_test_client
+from app import create_test_client, pagination_scan
 import pytest
 import boto3
 
@@ -21,7 +21,7 @@ def test_add(client):
     table = db.Table('todo-list-table')
 
     # Clear the table before testing
-    for item in table.scan().get('Items', []):
+    for item in pagination_scan(table):
         key = {'taskId': item['taskId']}
         table.delete_item(Key=key)
 
@@ -29,10 +29,7 @@ def test_add(client):
     resp = client.post('/add', data={'title': 'Buy groceries'})
 
     # Read all items from the table
-    response = table.scan()
-
-    # Convert into a list
-    todo_list = response.get('Items', [])
+    todo_list = pagination_scan(table)
 
     assert len(todo_list) == 1
 
@@ -49,10 +46,7 @@ def test_update(client):
     table = db.Table('todo-list-table')
 
     # Read all items from the table
-    response = table.scan()
-
-    # Convert into a list
-    todo_list = response.get('Items', [])
+    todo_list = pagination_scan(table)
 
     print(todo_list)
 
@@ -69,10 +63,7 @@ def test_delete(client):
     table = db.Table('todo-list-table')
 
     # Read all items from the table
-    response = table.scan()
-
-    # Convert into a list
-    todo_list = response.get('Items', [])
+    todo_list = pagination_scan(table)
 
     assert len(todo_list) == 0
 
