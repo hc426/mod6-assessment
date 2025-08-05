@@ -41,10 +41,7 @@ def home():
     table = db.Table('todo-list-table')
 
     # Read all items from the table
-    response = table.pagination_scan()
-
-    # Convert into a list
-    todo_list = response.get('Items', [])
+    todo_list = pagination_scan(table)
 
     # Sort the todo_list based on user selection
     todo_list.sort(key=lambda x: x[sort_tuple[0]], reverse=sort_tuple[1])
@@ -65,9 +62,9 @@ def add():
     # To find the next taskId, we will scan the table for the current biggest taskId
     # and increment it by 1 for the new item
     # Perform a scan on the table
-    response = table.pagination_scan()
+    result_items = pagination_scan(table)
     # Extract the taskIds from the response
-    task_ids = [item['taskId'] for item in response.get('Items', [])]
+    task_ids = [item['taskId'] for item in result_items]
     # Get the largest taskId (assuming taskId is a number)
     max_task_id = max(task_ids) if task_ids else 0
 
