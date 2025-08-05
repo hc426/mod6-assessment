@@ -50,9 +50,12 @@ def home():
     return render_template("base.html", todo_list=todo_list)
 
 
-@app.route("/updatetask", methods=['GET', 'POST'])
-def update_task_post(todo_title, todo_id):
+@app.route("/updatetaskpost", methods=['GET', 'POST'])
+def update_task_post():
+    todo_title = request.args.get('todo_title')
+    todo_id = int(request.args.get('todo_id'))
     if request.method == 'POST':
+        print('am i here??????')
         new_title = request.form.get("title")
 
         # Create DynamoDB resource
@@ -65,6 +68,8 @@ def update_task_post(todo_title, todo_id):
                         UpdateExpression="SET title = :val",  # Update the title
                         ExpressionAttributeValues={':val': new_title}  # Toggle the value
         )
+
+        return redirect(url_for("home"))
 
 
         
@@ -123,7 +128,7 @@ def update(todo_id):
     return redirect(url_for("home"))
 
 
-@app.route("/updatetask/<int:todo_id>")
+@app.route("/update_task/<int:todo_id>")
 def update_task(todo_id):
     #Updates the task name
     #Creates the dynamo resource
