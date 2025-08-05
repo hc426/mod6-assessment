@@ -9,6 +9,21 @@ sort_tuple = ('taskId', True)  # Default sort by newest
 def create_test_client():
     return app.test_client()
 
+def pagination_scan(table):
+    """
+    This function scans the DynamoDB table and handles pagination.
+    It returns all items in the table.
+    """
+    response = table.scan()
+    items = response.get('Items', [])
+    
+    # Continue scanning if there are more items to retrieve
+    while 'LastEvaluatedKey' in response:
+        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+        items.extend(response.get('Items', []))
+    
+    return items
+
 @app.route("/index")
 def index():
     return 'hello world'
@@ -26,7 +41,7 @@ def home():
     table = db.Table('todo-list-table')
 
     # Read all items from the table
-    response = table.scan()
+    response = table.pagination_scan()
 
     # Convert into a list
     todo_list = response.get('Items', [])
@@ -50,7 +65,7 @@ def add():
     # To find the next taskId, we will scan the table for the current biggest taskId
     # and increment it by 1 for the new item
     # Perform a scan on the table
-    response = table.scan()
+    response = table.pagination_scan()
     # Extract the taskIds from the response
     task_ids = [item['taskId'] for item in response.get('Items', [])]
     # Get the largest taskId (assuming taskId is a number)
