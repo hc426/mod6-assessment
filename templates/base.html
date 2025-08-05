@@ -44,7 +44,7 @@
             {% endif %}
 
             <a class="ui blue button" href="/update/{{ todo.taskId }}">Update</a>
-            <a class="ui red button" href="/delete/{{ todo.taskId }}" onclick="confirmAction()">Delete</a>
+            <a class="ui red button" href="/delete/{{ todo.taskId }}" onclick="confirmAction(event)">Delete</a>
         </div>
         {% endfor %}
     </div>
