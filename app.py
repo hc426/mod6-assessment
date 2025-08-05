@@ -2,19 +2,10 @@ from flask import Flask, render_template, request, redirect, url_for
 import os
 import boto3
 
-# You will likely need a database e.g. DynamoDB so you might either boto3 or pynamodb
-# Additional installs here:
-#
-#
-#
-
-
 app = Flask(__name__)
 
-## Instantiate your database here:
-#
-#
-#
+sort_tuple = ('taskId', True)  # Default sort by newest
+
 def create_test_client():
     return app.test_client()
 
@@ -39,6 +30,9 @@ def home():
 
     # Convert into a list
     todo_list = response.get('Items', [])
+
+    # Sort the todo_list based on user selection
+    todo_list.sort(key=lambda x: x[sort_tuple[0]], reverse=sort_tuple[1])
 
     return render_template("base.html", todo_list=todo_list)
 
@@ -103,6 +97,20 @@ def delete(todo_id):
 
     # Delete item
     table.delete_item(Key={'taskId': todo_id})
+
+    return redirect(url_for("home"))
+
+@app.route("/rearrange/<sort_string>")
+def rearrange(sort_string):
+    global sort_tuple
+    sort_string = sort_string.split('')
+    if sort_string[0] == 'a':
+        # Sort by Time
+        sort_key = 'taskId'
+    elif sort_string[0] == 'b':
+        # Sort by A-Z
+        sort_key = 'title'
+    sort_tuple = (sort_key, sort_string[1]=='b') # False for ascending, True for descending
 
     return redirect(url_for("home"))
 
