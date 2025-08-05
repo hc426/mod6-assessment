@@ -103,7 +103,7 @@ def delete(todo_id):
 @app.route("/rearrange/<sort_string>")
 def rearrange(sort_string):
     global sort_tuple
-    sort_string = sort_string.split('')
+    sort_string = sort_string.split('x')
     if sort_string[0] == 'a':
         # Sort by Time
         sort_key = 'taskId'
