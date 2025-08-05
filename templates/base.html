@@ -17,17 +17,16 @@
         <form class="ui form" action="/add" method="post">
             <div class="field">
                 <label>Todo Title</label>
-                <input type="text" name="title" placeholder="Enter Todo..."><br>
+                <input type="text" name="title" placeholder="Enter Todo..." required><br>
             </div>
             <button class="ui blue button" type="submit">Add</button>
         </form>
 
         <hr>
 
-        {% set idx = 1 %}
         {% for todo in todo_list %}
         <div class="ui segment">
-            <p class="ui big header">{{idx}} | {{ todo.title }}</p>
+            <p class="ui big header">{{loop.index}} | {{ todo.title }}</p>
 
             {% if todo.completed == False %}
             <span class="ui gray label">Not Complete</span>
@@ -38,14 +37,13 @@
             <a class="ui blue button" href="/update/{{ todo.taskId }}">Update</a>
             <a class="ui red button" href="/delete/{{ todo.taskId }}">Delete</a>
         </div>
-        {% set idx = idx + 1 %}
         {% endfor %}
     </div>
     
-    <div>
-        <a class="ui pink button" href="/rearrange/ab">Sort by Newest</a>
-        <a class="ui pink button" href="/rearrange/aa">Sort by Oldest</a>
-        <a class="ui pink button" href="/rearrange/ba">Sort by A-Z</a>
+    <div style="margin-top: 50px;" class="ui container">
+        <a class="ui pink button" href="/rearrange/axb">Sort by Newest</a>
+        <a class="ui pink button" href="/rearrange/axa">Sort by Oldest</a>
+        <a class="ui pink button" href="/rearrange/bxa">Sort by A-Z</a>
     </div>
 </body>
 
