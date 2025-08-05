@@ -1,8 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 import os
 import boto3
+import secrets
 
 app = Flask(__name__)
+
+app.secret_key = secrets.token_hex(16)  # Generates a secure random key
 
 sort_tuple = ('taskId', True)  # Default sort by newest
 
@@ -44,6 +47,9 @@ def home():
     # Read all items from the table
     todo_list = pagination_scan(table)
 
+    # Retrieve the sort_tuple from session, or use default of sorting by Newest if not set
+    sort_tuple = session.get('sort_tuple', ('taskId', True))
+
     # Sort the todo_list based on user selection
     todo_list.sort(key=lambda x: x[sort_tuple[0]], reverse=sort_tuple[1])
 
@@ -55,7 +61,6 @@ def update_task_post():
     todo_title = request.args.get('todo_title')
     todo_id = int(request.args.get('todo_id'))
     if request.method == 'POST':
-        print('am i here??????')
         new_title = request.form.get("title")
 
         # Create DynamoDB resource
@@ -162,7 +167,6 @@ def delete(todo_id):
 
 @app.route("/rearrange/<sort_string>")
 def rearrange(sort_string):
-    global sort_tuple
     sort_string = sort_string.split('x')
     if sort_string[0] == 'a':
         # Sort by Time
@@ -170,7 +174,7 @@ def rearrange(sort_string):
     elif sort_string[0] == 'b':
         # Sort by A-Z
         sort_key = 'title'
-    sort_tuple = (sort_key, sort_string[1]=='b') # False for ascending, True for descending
+    session['sort_tuple'] = (sort_key, sort_string[1]=='b') # False for ascending, True for descending
 
     return redirect(url_for("home"))
 
