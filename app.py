@@ -28,6 +28,7 @@ def pagination_scan(table):
 def index():
     return 'hello world'
 
+#Links with display
 @app.route("/")
 def home():
     # Complete the code below
@@ -49,6 +50,30 @@ def home():
     return render_template("base.html", todo_list=todo_list)
 
 
+@app.route("/updatetask", methods=['GET', 'POST'])
+def update_task_post(todo_title, todo_id):
+    if request.method == 'POST':
+        new_title = request.form.get("title")
+
+        # Create DynamoDB resource
+        db = boto3.resource('dynamodb', region_name='ap-southeast-1')
+        
+        # Find table
+        table = db.Table('todo-list-table')
+
+        table.update_item(Key={'taskId': todo_id}, 
+                        UpdateExpression="SET title = :val",  # Update the title
+                        ExpressionAttributeValues={':val': new_title}  # Toggle the value
+        )
+
+
+        
+    return render_template("updatetask.html", todo_title=todo_title, todo_id=todo_id)
+
+
+
+
+#Links without display
 @app.route("/add", methods=["POST"])
 def add():
     title = request.form.get("title")
@@ -96,6 +121,24 @@ def update(todo_id):
     )
 
     return redirect(url_for("home"))
+
+
+@app.route("/updatetask/<int:todo_id>")
+def update_task(todo_id):
+    #Updates the task name
+    #Creates the dynamo resource
+    db = boto3.resource('dynamodb', region_name='ap-southeast-1')
+    
+    #Find table
+    table = db.Table('todo-list-table')
+
+    #Get the current name of the task
+    response = table.get_item(Key={'taskId': todo_id})
+    current_title = response['Item'].get('title')
+
+    return redirect(url_for('update_task_post', todo_title=current_title, todo_id=todo_id))
+
+
 
 
 @app.route("/delete/<int:todo_id>")
